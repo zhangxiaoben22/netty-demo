@@ -1,0 +1,13 @@
+**/.idea/*
+**/.settings/*
+**/.svn/**
+**/target/**
+**/bin/**
+**/*.iml
+**/.classpath
+**/.project
+**/log/*
+**/*.db
+**/*.tt
+/bin/
+/target/
