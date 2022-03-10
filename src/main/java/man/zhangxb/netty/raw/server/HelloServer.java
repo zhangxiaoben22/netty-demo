@@ -1,4 +1,4 @@
-package man.zhangxb.netty;
+package man.zhangxb.netty.raw.server;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -8,8 +8,10 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.FixedLengthFrameDecoder;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
 
 public class HelloServer  {
     public static void main(String[] args) throws Exception {
@@ -37,7 +39,9 @@ public class HelloServer  {
 
                             //pipeline.addLast("HttpServerCodec", new HttpServerCodec());
 
-                            pipeline.addLast("decider", new StringDecoder());
+                            pipeline.addLast("fdecoder", new FixedLengthFrameDecoder(6));
+                            pipeline.addLast("decoder", new StringDecoder());
+                            pipeline.addLast("encoder", new StringEncoder());
 
                             // 添加自定义的助手类，返回 "hello netty~"
                             pipeline.addLast("customHandler", new ServerHandler());

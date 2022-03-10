@@ -1,4 +1,4 @@
-package man.zhangxb.netty;
+package man.zhangxb.netty.raw.server;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -7,23 +7,26 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
+import man.zhangxb.netty.raw.listener.OwnListerner;
 
 /**
  * 创建自定义助手类
  */
 // SimpleChannelInboundHandler: 对于请求来讲，其实相当于[入站，入境]
-public class CustomHandler extends SimpleChannelInboundHandler<HttpObject> {
+public class ServerHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, HttpObject msg)
+    protected void channelRead0(ChannelHandlerContext ctx, Object msg)
             throws Exception {
+
+        System.out.println("收到："+msg);
+
         // 获取channel
         Channel channel = ctx.channel();
 
         if (msg instanceof HttpRequest) {
             // 显示客户端的远程地址
             System.out.println(channel.remoteAddress());
-
             // 定义发送的数据消息
             ByteBuf content = Unpooled.copiedBuffer("Hello netty~", CharsetUtil.UTF_8);
 
@@ -39,6 +42,16 @@ public class CustomHandler extends SimpleChannelInboundHandler<HttpObject> {
             // 把响应刷到客户端
             ctx.writeAndFlush(response);
         }
+
+
+        if(msg.toString().length()>100){
+            return;
+        }
+
+
+        ctx.writeAndFlush(msg+"_hello");
+
+
     }
 
     /**
@@ -72,7 +85,7 @@ public class CustomHandler extends SimpleChannelInboundHandler<HttpObject> {
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("channeld读取完毕。。。");
+        //System.out.println("channeld读取完毕。。。");
         super.channelReadComplete(ctx);
     }
 

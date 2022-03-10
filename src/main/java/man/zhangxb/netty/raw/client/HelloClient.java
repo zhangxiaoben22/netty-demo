@@ -1,4 +1,4 @@
-package man.zhangxb.netty.client;
+package man.zhangxb.netty.raw.client;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -7,10 +7,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.InetSocketAddress;
+import man.zhangxb.netty.raw.listener.OwnListerner;
 
 public class HelloClient {
 
@@ -34,6 +31,7 @@ public class HelloClient {
                     ch.pipeline()
                             //关键信息  string到二进制的转换，不加程序就永远发布出去，也不报异常。。。
                             .addLast(new StringEncoder())
+                            .addLast(new StringDecoder())
                             .addLast(new EchoClientHandler());
                 }
             });
@@ -62,11 +60,18 @@ public class HelloClient {
             channel.writeAndFlush(line+"\r\n");
             System.out.println("client发送："+line);
         }*/
-
+        OwnListerner ownListerner = new OwnListerner();
         for(;;){
-            channel.writeAndFlush("我是谁"+"\r\n").sync();
-            System.out.println("发送一条消息！");
-            Thread.sleep(500L);
+            //channel.writeAndFlush("我是谁"+"\r\n").addListener(new OwnListerner());
+
+
+            channel.writeAndFlush("weareh").addListener(ownListerner);
+            //channel.writeAndFlush("我是谁").addListener(ownListerner);
+
+
+            //channel.writeAndFlush("我是谁"+"\r\n");
+
+            //Thread.sleep(5000L);
         }
     }
 }
